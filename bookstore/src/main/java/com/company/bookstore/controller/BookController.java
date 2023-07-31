@@ -37,9 +37,13 @@ public class BookController {
         return bookRepository.findById(id).orElse(null);
     }
 
+    @QueryMapping
+    public List<Book> findBooksByAuthorId(@Argument Integer authorId) {
+        return bookRepository.findByAuthorId(authorId);
+    }
+
     @MutationMapping
     public Book addBook(
-            @Argument Integer id,
             @Argument String isbn,
             @Argument String publishDate,
             @Argument Integer authorId,
@@ -47,26 +51,21 @@ public class BookController {
             @Argument Integer publisherId,
             @Argument Double price) {
 
-        Optional<Book> existingBookOptional = bookRepository.findById(id);
-        if (existingBookOptional.isPresent()) {
-            Book existingBook = existingBookOptional.get();
+        Book newBook = new Book();
 
-            Author author = authorRepository.findById(authorId)
-                    .orElseThrow(() -> new RuntimeException("Author not found with id: " + authorId));
-            Publisher publisher = publisherRepository.findById(publisherId)
-                    .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + publisherId));
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new RuntimeException("Author not found with id: " + authorId));
+        Publisher publisher = publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + publisherId));
 
-            existingBook.setIsbn(isbn);
-            existingBook.setPublishDate(publishDate);
-            existingBook.setAuthor(author);
-            existingBook.setTitle(title);
-            existingBook.setPublisher(publisher);
-            existingBook.setPrice(price);
+        newBook.setIsbn(isbn);
+        newBook.setPublishDate(publishDate);
+        newBook.setAuthor(author);
+        newBook.setTitle(title);
+        newBook.setPublisher(publisher);
+        newBook.setPrice(price);
 
-            return bookRepository.save(existingBook);
-        } else {
-            return null;
-        }
+        return bookRepository.save(newBook);
     }
 
     @MutationMapping
@@ -97,7 +96,7 @@ public class BookController {
 
             return bookRepository.save(existingBook);
         } else {
-            return null;
+            throw new RuntimeException("Book not found with id: " + id);
         }
     }
 
