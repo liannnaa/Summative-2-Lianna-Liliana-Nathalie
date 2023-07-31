@@ -1,0 +1,26 @@
+type Book {
+    id: ID
+    isbn: String
+    publishDate: String
+    title: String
+    price: Float
+    author: Author
+    publisher: Publisher
+}
+
+type Author {
+    id: ID
+    firstName: String
+    lastName: String
+    books: [Book]
+}
+
+type Publisher {
+    id: ID
+    name: String
+    books: [Book]
+}
+
+type Query {
+    findBookById(id: ID): Book
+}
