@@ -39,7 +39,7 @@ public class BookController {
 
     @QueryMapping
     public List<Book> findBooksByAuthorId(@Argument Integer authorId) {
-        return bookRepository.findByAuthorId(authorId);
+        return bookRepository.findByAuthorAuthorId(authorId);
     }
 
     @MutationMapping
