@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -33,79 +34,57 @@ public class BookController {
     }
 
     @QueryMapping
-    public Book findBookById(@Argument Integer id) {
-        return bookRepository.findById(id).orElse(null);
+    public Book findBookById(@Argument int id) {
+        Optional<Book> returnVal = bookRepository.findById(id);
+        if (returnVal.isPresent()) {
+            return returnVal.get();
+        } else {
+            return null;
+        }
     }
 
     @QueryMapping
-    public List<Book> findBooksByAuthorId(@Argument Integer authorId) {
-        return bookRepository.findByAuthorAuthorId(authorId);
+    public List<Book> findBooksByAuthorId(@Argument int authorId) {
+        List<Book> returnVal = bookRepository.findByAuthorAuthorId(authorId);
+        if (returnVal.isEmpty()) {
+            return null;
+        } else {
+            return returnVal;
+        }
     }
 
     @MutationMapping
     public Book addBook(
+            @Argument int id,
             @Argument String isbn,
             @Argument String publishDate,
-            @Argument Integer authorId,
+            @Argument Author author,
             @Argument String title,
-            @Argument Integer publisherId,
+            @Argument Publisher publisher,
             @Argument Double price) {
 
-        Book newBook = new Book();
-
-        Author author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new RuntimeException("Author not found with id: " + authorId));
-        Publisher publisher = publisherRepository.findById(publisherId)
-                .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + publisherId));
-
-        newBook.setIsbn(isbn);
-        newBook.setPublishDate(publishDate);
-        newBook.setAuthor(author);
-        newBook.setTitle(title);
-        newBook.setPublisher(publisher);
-        newBook.setPrice(price);
+        Book newBook = new Book(id, isbn, publishDate, author, title, publisher, price);
 
         return bookRepository.save(newBook);
     }
 
     @MutationMapping
     public Book updateBook(
-            @Argument Integer id,
+            @Argument int id,
             @Argument String isbn,
             @Argument String publishDate,
-            @Argument Integer authorId,
+            @Argument Author author,
             @Argument String title,
-            @Argument Integer publisherId,
+            @Argument Publisher publisher,
             @Argument Double price) {
 
-        Optional<Book> existingBookOptional = bookRepository.findById(id);
-        if (existingBookOptional.isPresent()) {
-            Book existingBook = existingBookOptional.get();
+        Book newBook = new Book(id, isbn, publishDate, author, title, publisher, price);
 
-            Author author = authorRepository.findById(authorId)
-                    .orElseThrow(() -> new RuntimeException("Author not found with id: " + authorId));
-            Publisher publisher = publisherRepository.findById(publisherId)
-                    .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + publisherId));
-
-            existingBook.setIsbn(isbn);
-            existingBook.setPublishDate(publishDate);
-            existingBook.setAuthor(author);
-            existingBook.setTitle(title);
-            existingBook.setPublisher(publisher);
-            existingBook.setPrice(price);
-
-            return bookRepository.save(existingBook);
-        } else {
-            throw new RuntimeException("Book not found with id: " + id);
-        }
+        return bookRepository.save(newBook);
     }
 
     @MutationMapping
-    public boolean deleteBookById(@Argument Integer id) {
-        boolean exists = bookRepository.existsById(id);
-        if (exists) {
-            bookRepository.deleteById(id);
-        }
-        return exists;
+    public void deleteBookById(@Argument int id) {
+        bookRepository.deleteById(id);
     }
 }

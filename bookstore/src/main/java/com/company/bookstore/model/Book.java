@@ -1,41 +1,51 @@
 package com.company.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "book")
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bookId;
+    private int bookId;
 
-    @Column(nullable = false)
     private String isbn;
 
-    @Column(nullable = false)
     private String publishDate;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id")
     private Author author;
 
-    @Column(nullable = false)
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "publisher_id", nullable = false)
+    @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
-    @Column(nullable = false)
     private double price;
 
-    public Integer getBookId() {
+    public Book(){}
+    public Book(int bookId, String isbn, String publishDate, Author author, String title, Publisher publisher, Double price){
+        this.bookId = bookId;
+        this.isbn = isbn;
+        this.publishDate = publishDate;
+        this.author = author;
+        this.title = title;
+        this.publisher = publisher;
+        this.price = price;
+    }
+
+    public int getBookId() {
         return bookId;
     }
 
-    public void setBookId(Integer bookId) {
+    public void setBookId(int bookId) {
         this.bookId = bookId;
     }
 

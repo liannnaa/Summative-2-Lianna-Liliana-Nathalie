@@ -29,6 +29,8 @@ public class BookRepositoryTest {
     @BeforeEach
     public void setUp() {
         repo.deleteAll();
+        authRepo.deleteAll();
+        pubRepo.deleteAll();
 
         // Arrange
         book = new Book();
@@ -48,13 +50,11 @@ public class BookRepositoryTest {
         book.setTitle("Test Title");
         book.setPublisher(publisher);
         book.setPrice(0.00);
+        book = repo.save(book);
     }
 
     @Test
     public void addBook() {
-        // Act
-        book = repo.save(book);
-
         // Assert
         Optional<Book> foundBook = repo.findById(book.getBookId());
 
@@ -63,9 +63,6 @@ public class BookRepositoryTest {
 
     @Test
     public void updateBook() {
-        // Arrange
-        repo.save(book);
-
         // Act
         book.setTitle("UPDATED TITLE");
         repo.save(book);
@@ -78,9 +75,6 @@ public class BookRepositoryTest {
 
     @Test
     public void deleteBook() {
-        // Arrange
-        repo.save(book);
-
         // Act
         repo.deleteById(book.getBookId());
 
@@ -92,9 +86,6 @@ public class BookRepositoryTest {
 
     @Test
     public void getBookById() {
-        // Arrange
-        book = repo.save(book);
-
         // Act
         Book foundBook = repo.findById(book.getBookId()).orElse(null);
 
@@ -105,8 +96,6 @@ public class BookRepositoryTest {
     @Test
     public void getBooksByAuthorId() {
         // Arrange
-        repo.save(book);
-
         Book book2 = new Book();
 
         Author author2 = new Author();

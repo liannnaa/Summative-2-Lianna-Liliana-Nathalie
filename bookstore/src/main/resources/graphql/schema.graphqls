@@ -1,5 +1,5 @@
 type Book {
-    bookId: ID
+    bookId: ID!
     isbn: String
     publishDate: String
     title: String
@@ -9,25 +9,25 @@ type Book {
 }
 
 type Author {
-    id: ID
+    authorId: ID!
     firstName: String
     lastName: String
     books: [Book]
 }
 
 type Publisher {
-    id: ID
+    publisherId: ID!
     name: String
     books: [Book]
 }
 
 type Query {
-    findBookById(id: ID): Book
-    findBooksByAuthorId(authorId: ID): [Book]
+    findBookById(id: ID!): Book
+    findBooksByAuthorId(authorId: ID!): [Book]
 }
 
 type Mutation {
-    addBook(isbn: String, publishDate: String, authorId: ID, title: String, publisherId: ID, price: Float): Book
-    updateBook(id: ID, isbn: String, publishDate: String, authorId: ID, title: String, publisherId: ID, price: Float): Book
-    deleteBookById(id: ID): Boolean
+    addBook(isbn: String, publishDate: String, authorId: ID!, title: String, publisherId: ID!, price: Float): Book
+    updateBook(id: ID!, isbn: String, publishDate: String, authorId: ID!, title: String, publisherId: ID!, price: Float): Book
+    deleteBookById(id: ID!): Boolean
 }
