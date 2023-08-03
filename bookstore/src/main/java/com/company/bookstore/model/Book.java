@@ -31,6 +31,15 @@ public class Book {
     private double price;
 
     public Book(){}
+
+    public Book(String isbn, String publishDate, Author author, String title, Publisher publisher, Double price){
+        this.isbn = isbn;
+        this.publishDate = publishDate;
+        this.author = author;
+        this.title = title;
+        this.publisher = publisher;
+        this.price = price;
+    }
     public Book(int bookId, String isbn, String publishDate, Author author, String title, Publisher publisher, Double price){
         this.bookId = bookId;
         this.isbn = isbn;

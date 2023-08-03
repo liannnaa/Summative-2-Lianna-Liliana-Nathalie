@@ -3,7 +3,9 @@ package com.company.bookstore.controller;
 import com.company.bookstore.model.Author;
 import com.company.bookstore.model.Book;
 import com.company.bookstore.model.Publisher;
+import com.company.bookstore.repository.AuthorRepository;
 import com.company.bookstore.repository.BookRepository;
+import com.company.bookstore.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -18,6 +20,10 @@ public class BookGraphController {
 
     @Autowired
     BookRepository bookRepository;
+    @Autowired
+    AuthorRepository authorRepository;
+    @Autowired
+    PublisherRepository publisherRepository;
 
     @QueryMapping
     public List<Book> books() {
@@ -46,15 +52,18 @@ public class BookGraphController {
 
     @MutationMapping
     public Book addBook(
-            @Argument int id,
             @Argument String isbn,
             @Argument String publishDate,
-            @Argument Author author,
+            @Argument int authorId,
             @Argument String title,
-            @Argument Publisher publisher,
+            @Argument int publisherId,
             @Argument Double price) {
 
-        Book newBook = new Book(id, isbn, publishDate, author, title, publisher, price);
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new RuntimeException("Author not found"));
+        Publisher publisher = publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new RuntimeException("Publisher not found"));
+        Book newBook = new Book(isbn, publishDate, author, title, publisher, price);
 
         return bookRepository.save(newBook);
     }
@@ -64,14 +73,26 @@ public class BookGraphController {
             @Argument int id,
             @Argument String isbn,
             @Argument String publishDate,
-            @Argument Author author,
+            @Argument int authorId,
             @Argument String title,
-            @Argument Publisher publisher,
+            @Argument int publisherId,
             @Argument Double price) {
 
-        Book newBook = new Book(id, isbn, publishDate, author, title, publisher, price);
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new RuntimeException("Author not found"));
+        Publisher publisher = publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new RuntimeException("Publisher not found"));
+        Book bookToUpdate = bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        return bookRepository.save(newBook);
+        bookToUpdate.setIsbn(isbn);
+        bookToUpdate.setPublishDate(publishDate);
+        bookToUpdate.setAuthor(author);
+        bookToUpdate.setTitle(title);
+        bookToUpdate.setPublisher(publisher);
+        bookToUpdate.setPrice(price);
+
+        return bookRepository.save(bookToUpdate);
     }
 
     @MutationMapping
