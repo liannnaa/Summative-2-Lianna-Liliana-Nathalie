@@ -1,206 +1,113 @@
 package com.company.bookstore.controller;
 
-import com.company.bookstore.model.Author;
 import com.company.bookstore.model.Book;
-import com.company.bookstore.model.Publisher;
-import com.company.bookstore.repository.AuthorRepository;
 import com.company.bookstore.repository.BookRepository;
-import com.company.bookstore.repository.PublisherRepository;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Arrays;
+import java.util.Optional;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(BookController.class)
 public class BookControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
+    private ObjectMapper mapper = new ObjectMapper();
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    BookRepository repo;
-
-    @Autowired
-    AuthorRepository authRepo;
-
-    @Autowired
-    PublisherRepository pubRepo;
+    @MockBean
+    private BookRepository repo;
 
     private Book book;
 
     @BeforeEach
-    public void setUp() {
-        repo.deleteAll();
-        authRepo.deleteAll();
-        pubRepo.deleteAll();
-
-        // Arrange
+    public void setup() {
         book = new Book();
-
-        Author author = new Author();
-        author.setFirstName("Test First");
-        author.setLastName("Test Last");
-        author = authRepo.save(author);
-
-        Publisher publisher = new Publisher();
-        publisher.setName("Test Name");
-        publisher = pubRepo.save(publisher);
-
         book.setIsbn("Test Isbn");
         book.setPublishDate("Test Date");
-        book.setAuthor(author);
         book.setTitle("Test Title");
-        book.setPublisher(publisher);
         book.setPrice(0.00);
-        book = repo.save(book);
-
-        System.out.println("Book ID is: " + book.getBookId());
     }
 
     @Test
-    public void whenFindBookById_thenReturnBook() throws Exception {
-        String query = "{ \"query\": \"{ findBookById(id: " + book.getBookId() + ") { bookId title isbn publishDate author { authorId firstName lastName } publisher { publisherId name } price } }\"}";
+    public void addBookTest() throws Exception {
+        when(repo.save(any(Book.class))).thenReturn(book);
 
-        RequestBuilder request = MockMvcRequestBuilders
-                .post("/graphql")
-                .content(query)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON);
-
-        MvcResult result = mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Validate the response using ObjectMapper
-        String responseContent = result.getResponse().getContentAsString();
-        JsonNode responseJson = objectMapper.readTree(responseContent);
-
-        // Validate the fields in the response
-        assertEquals("Test Title", responseJson.path("data").path("findBookById").path("title").asText());
-        assertEquals("Test Isbn", responseJson.path("data").path("findBookById").path("isbn").asText());
-        assertEquals("Test First", responseJson.path("data").path("findBookById").path("author").path("firstName").asText());
-        assertEquals("Test Name", responseJson.path("data").path("findBookById").path("publisher").path("name").asText());
-        assertEquals(0.00, responseJson.path("data").path("findBookById").path("price").asDouble());
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/books")
+                        .content(mapper.writeValueAsString(book))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.isbn").value("Test Isbn"))
+                .andExpect(jsonPath("$.publishDate").value("Test Date"))
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.price").value(0.00));
     }
 
     @Test
-    public void whenFindBooksByAuthorId_thenReturnBooks() throws Exception {
-        String query = "{" +
-                "  \"query\": \"{ findBooksByAuthorId(authorId: 1) { bookId title isbn publishDate author { id firstName lastName } publisher { id name } price } }\"" +
-                "}";
+    public void updateBookTest() throws Exception {
+        when(repo.save(any(Book.class))).thenReturn(book);
 
-        RequestBuilder request = MockMvcRequestBuilders
-                .post("/graphql")
-                .content(query)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON);
-
-        MvcResult result = mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Validate the response using ObjectMapper
-        String responseContent = result.getResponse().getContentAsString();
-        JsonNode responseJson = objectMapper.readTree(responseContent);
-
-        // Validate that the returned list is not empty
-        assertTrue(responseJson.path("data").path("findBooksByAuthorId").isArray());
-        assertTrue(responseJson.path("data").path("findBooksByAuthorId").size() > 0);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/books")
+                        .content(mapper.writeValueAsString(book))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    public void whenAddBook_thenCreateBook() throws Exception {
-        String mutation = "{" +
-                "  \"query\": \"mutation { addBook(isbn: \\\"1234567890\\\", publishDate: \\\"2023-08-01\\\", authorId: 1, title: \\\"Test Book\\\", publisherId: 1, price: 19.99) { bookId title isbn publishDate author { id firstName lastName } publisher { id name } price } }\"" +
-                "}";
-
-        RequestBuilder request = MockMvcRequestBuilders
-                .post("/graphql")
-                .content(mutation)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON);
-
-        MvcResult result = mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Validate the response using ObjectMapper
-        String responseContent = result.getResponse().getContentAsString();
-        JsonNode responseJson = objectMapper.readTree(responseContent);
-
-        // Validate the fields in the response
-        assertEquals("Test Book", responseJson.path("data").path("addBook").path("title").asText());
-        assertEquals("1234567890", responseJson.path("data").path("addBook").path("isbn").asText());
-        assertEquals("Test First", responseJson.path("data").path("addBook").path("author").path("firstName").asText());
-        assertEquals("Test Name", responseJson.path("data").path("addBook").path("publisher").path("name").asText());
-        assertEquals(19.99, responseJson.path("data").path("addBook").path("price").asDouble());
+    public void deleteBookTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/books/{id}", 1))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    public void whenUpdateBook_thenUpdateExistingBook() throws Exception {
-        String mutation = "{" +
-                "  \"query\": \"mutation { updateBook(id: 1, isbn: \\\"1234567890\\\", publishDate: \\\"2023-08-01\\\", authorId: 1, title: \\\"Updated Book\\\", publisherId: 1, price: 19.99) { bookId title isbn publishDate author { id firstName lastName } publisher { id name } price } }\"" +
-                "}";
+    public void getBookByIdTest() throws Exception {
+        when(repo.findById(1)).thenReturn(Optional.of(book));
 
-        RequestBuilder request = MockMvcRequestBuilders
-                .post("/graphql")
-                .content(mutation)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON);
-
-        MvcResult result = mockMvc.perform(request)
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/books/{id}", 1))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        // Validate the response using ObjectMapper
-        String responseContent = result.getResponse().getContentAsString();
-        JsonNode responseJson = objectMapper.readTree(responseContent);
-
-        // Validate the fields in the response
-        assertEquals("Updated Book", responseJson.path("data").path("updateBook").path("title").asText());
-        assertEquals("1234567890", responseJson.path("data").path("updateBook").path("isbn").asText());
-        assertEquals("Stephen", responseJson.path("data").path("updateBook").path("author").path("firstName").asText());
-        assertEquals("McGraw-Hill", responseJson.path("data").path("updateBook").path("publisher").path("name").asText());
-        assertEquals(19.99, responseJson.path("data").path("updateBook").path("price").asDouble());
+                .andExpect(jsonPath("$.isbn").value("Test Isbn"))
+                .andExpect(jsonPath("$.publishDate").value("Test Date"))
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.price").value(0.00));
     }
 
     @Test
-    public void whenDeleteBookById_thenDeleteBook() throws Exception {
-        String mutation = "{" +
-                "  \"query\": \"mutation { deleteBookById(id: 1) }\"" +
-                "}";
+    public void getAllBooksTest() throws Exception {
+        when(repo.findAll()).thenReturn(Arrays.asList(book));
 
-        RequestBuilder request = MockMvcRequestBuilders
-                .post("/graphql")
-                .content(mutation)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON);
-
-        MvcResult result = mockMvc.perform(request)
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/books"))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(jsonPath("$[0].isbn").value("Test Isbn"))
+                .andExpect(jsonPath("$[0].publishDate").value("Test Date"))
+                .andExpect(jsonPath("$[0].title").value("Test Title"))
+                .andExpect(jsonPath("$[0].price").value(0.00));
+    }
 
-        // Validate the response using ObjectMapper
-        String responseContent = result.getResponse().getContentAsString();
-        JsonNode responseJson = objectMapper.readTree(responseContent);
+    @Test
+    public void getBooksByAuthorIdTest() throws Exception {
+        when(repo.findByAuthorAuthorId(1)).thenReturn(Arrays.asList(book));
 
-        // Validate that the book was deleted successfully
-        assertTrue(responseJson.path("data").path("deleteBookById").asBoolean());
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/books/authors/{authorId}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].isbn").value("Test Isbn"))
+                .andExpect(jsonPath("$[0].publishDate").value("Test Date"))
+                .andExpect(jsonPath("$[0].title").value("Test Title"))
+                .andExpect(jsonPath("$[0].price").value(0.00));
     }
 }
