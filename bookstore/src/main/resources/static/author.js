@@ -141,6 +141,13 @@ async function getAuthorById() {
         output += `<p class="message-output">Postal Code: ${author.postalCode}</p>`;
         output += `<p class="message-output">Phone: ${author.phone}</p>`;
         output += `<p class="message-output">Email: ${author.email}</p>`;
+        output += `<p class="message-output">Books Written:</p>`;
+        for(let book of author.authorBooks){
+            output += `<p class="message-output">Book Id: ${book.bookId}</p>`;
+            output += `<p class="message-output">Title: ${book.title}</p>`;
+            output += `<p class="message-output">Publisher Id: ${book.publisher.publisherId}</p>`;
+            output += `<p class="message-output">Publisher Name: ${book.publisher.name}</p>`;
+        }
         output += `<hr>`;
 
         document.getElementById('authorsOutput').innerHTML = output;

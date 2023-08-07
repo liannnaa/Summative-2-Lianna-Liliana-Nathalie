@@ -1,6 +1,9 @@
 package com.company.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -8,8 +11,9 @@ import java.util.Objects;
 public class Author {
 
     @Id
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer authorId;
+    private int authorId;
 
     private String firstName;
     private String lastName;
@@ -20,11 +24,14 @@ public class Author {
     private String phone;
     private String email;
 
-    public Integer getAuthorId() {
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private List<Book> authorBooks;
+
+    public int getAuthorId() {
         return authorId;
     }
 
-    public void setAuthorId(Integer authorId) {
+    public void setAuthorId(int authorId) {
         this.authorId = authorId;
     }
 
