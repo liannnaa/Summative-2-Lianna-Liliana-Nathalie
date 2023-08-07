@@ -3,6 +3,7 @@ package com.company.bookstore.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +22,9 @@ public class Publisher {
     private String postalCode;
     private String phone;
     private String email;
+
+    @OneToMany(mappedBy = "publisher", fetch = FetchType.LAZY)
+    private List<Book> publisherBooks;
 
     public int getPublisherId() {
         return publisherId;

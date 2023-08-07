@@ -108,6 +108,9 @@ async function getPublisherById() {
                 postalCode
                 phone
                 email
+                publisherBooks {
+                    title
+                }
               }
             }`}),
         });

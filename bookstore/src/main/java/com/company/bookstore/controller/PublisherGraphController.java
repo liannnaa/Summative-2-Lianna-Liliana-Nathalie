@@ -21,6 +21,9 @@ public class PublisherGraphController {
     @Autowired
     PublisherRepository publisherRepository;
 
+    @Autowired
+    BookRepository bookRepository;
+
     @QueryMapping
     public List<Publisher> getAllPublishers() {
         return publisherRepository.findAll();
@@ -30,6 +33,11 @@ public class PublisherGraphController {
     public Publisher getPublisherById(@Argument int id) {
         Optional<Publisher> returnVal = publisherRepository.findById(id);
         return returnVal.orElse(null);
+    }
+
+    @QueryMapping
+    public List<Book> getBooksByPublisherId(@Argument int publisherId) {
+        return bookRepository.findByPublisherPublisherId(publisherId);
     }
 
     @MutationMapping

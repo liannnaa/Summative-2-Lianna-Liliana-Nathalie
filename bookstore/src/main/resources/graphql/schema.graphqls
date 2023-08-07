@@ -30,7 +30,7 @@ type Publisher {
     postalCode: String
     phone: String
     email: String
-    books: [Book]
+    publisherBooks: [Book]
 }
 
 type Query {
