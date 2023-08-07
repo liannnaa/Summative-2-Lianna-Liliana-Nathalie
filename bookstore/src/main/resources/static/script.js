@@ -13,14 +13,22 @@ async function addBook() {
         },
         price: document.getElementById('addPrice').value
     };
-    await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(book),
-    });
-}
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(book),
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        document.getElementById('addBookStatus').textContent = 'Book added successfully.';
+        } catch (error) {
+            document.getElementById('addBookStatus').textContent = 'Error: ' + error;
+        }
+    }
 
 async function updateBook() {
     const book = {
@@ -36,103 +44,159 @@ async function updateBook() {
         },
         price: document.getElementById('updatePrice').value
     };
-    await fetch(apiUrl, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(book),
-    });
-}
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(book),
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        document.getElementById('updateBookStatus').textContent = 'Book updated successfully.';
+        } catch (error) {
+            document.getElementById('updateBookStatus').textContent = 'Error: ' + error;
+        }
+    }
 
 async function deleteBook() {
     const bookId = document.getElementById('deleteBookId').value;
-    await fetch(`${apiUrl}/${bookId}`, {
-        method: 'DELETE',
-    });
-}
-
-async function getBooks() {
-    const response = await fetch(apiUrl);
-    const books = await response.json();
-
-    let output = '';
-    for (let book of books) {
-        output += `<p>Title: ${book.title}</p>`;
-        output += `<p>Author: ${book.author.firstName} ${book.author.lastName}</p>`;
-        output += `<p>Price: ${book.price}</p>`;
-        output += `<hr>`;
+    try {
+        const response = await fetch(`${apiUrl}/${bookId}`, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        document.getElementById('deleteBookStatus').textContent = 'Book deleted successfully.';
+        } catch (error) {
+            document.getElementById('deleteBookStatus').textContent = 'Error: ' + error;
+        }
     }
 
-    document.getElementById('booksOutput').innerHTML = output;
+async function getBooks() {
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error("An error occurred while getting the books");
+        }
+        const books = await response.json();
+        let output = '';
+        for (let book of books) {
+            output += `<p class="message-output">Book Id: ${book.bookId}</p>`;
+            output += `<p class="message-output">Title: ${book.title}</p>`;
+            output += `<p class="message-output">Author: ${book.author.firstName} ${book.author.lastName}</p>`;
+            output += `<p class="message-output">Publisher: ${book.publisher.name}</p>`;
+            output += `<hr>`;
+        }
+
+        document.getElementById('booksOutput').innerHTML = output;
+    } catch (error) {
+        document.getElementById('booksOutput').innerHTML = `<p>Error: ${error.message}</p>`;
+    }
 }
 
 async function getBookById() {
-    const bookId = document.getElementById('getBookId').value;
-    const response = await fetch('http://localhost:8080/graphql', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({query: `{
-          findBookById(id: "${bookId}") {
-            bookId
-            isbn
-            publishDate
-            title
-            price
-            author {
-              authorId
-              firstName
-              lastName
-            }
-            publisher {
-              publisherId
-              name
-            }
-          }
-        }`}),
-    });
+    try {
+        const bookId = document.getElementById('getBookId').value;
+        const response = await fetch('http://localhost:8080/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({query: `{
+              findBookById(id: "${bookId}") {
+                bookId
+                isbn
+                publishDate
+                title
+                price
+                author {
+                  authorId
+                  firstName
+                  lastName
+                }
+                publisher {
+                  publisherId
+                  name
+                }
+              }
+            }`}),
+        });
 
-    const data = await response.json();
-    let book = data.data.findBookById;
+        if (!response.ok) {
+            throw new Error("An error occurred while getting the book by id");
+        }
 
-    let output = '';
-    output += `<p>Title: ${book.title}</p>`;
-    output += `<p>Author: ${book.author.firstName} ${book.author.lastName}</p>`;
-    output += `<p>Price: ${book.price}</p>`;
+        const data = await response.json();
+        let book = data.data.findBookById;
 
-    document.getElementById('booksOutput').innerHTML = output;
+        let output = '';
+        output += `<p class="message-output">Book Id: ${book.bookId}</p>`;
+        output += `<p class="message-output">Isbn: ${book.isbn}</p>`;
+        output += `<p class="message-output">Price: ${book.price}</p>`;
+        output += `<p class="message-output">Publish Date: ${book.publishDate}</p>`;
+        output += `<p class="message-output">Title: ${book.title}</p>`;
+        output += `<p class="message-output">Author Id: ${book.author.authorId}</p>`;
+        output += `<p class="message-output">Author: ${book.author.firstName} ${book.author.lastName}</p>`;
+        output += `<p class="message-output">Publisher Id: ${book.publisher.publisherId}</p>`;
+        output += `<p class="message-output">Publisher: ${book.publisher.name}</p>`;
+        output += `<hr>`;
+
+        document.getElementById('booksOutput').innerHTML = output;
+    } catch (error) {
+        document.getElementById('booksOutput').innerHTML = `<p>Error: ${error.message}</p>`;
+    }
 }
 
 async function getBooksByAuthorId() {
-    const authorId = document.getElementById('getAuthorId').value;
-    const response = await fetch('http://localhost:8080/graphql', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({query: `{
-          findBooksByAuthorId(authorId: "${authorId}") {
-            bookId
-            title
-            author {
-              firstName
-              lastName
-            }
-          }
-        }`}),
-    });
+    try {
+        const authorId = document.getElementById('getAuthorId').value;
+        const response = await fetch('http://localhost:8080/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({query: `{
+              findBooksByAuthorId(authorId: "${authorId}") {
+                bookId
+                isbn
+                publishDate
+                title
+                price
+                author {
+                  authorId
+                  firstName
+                  lastName
+                }
+                publisher {
+                  publisherId
+                  name
+                }
+              }
+            }`}),
+        });
 
-    const data = await response.json();
-    let books = data.data.findBooksByAuthorId;
+        if (!response.ok) {
+            throw new Error("An error occurred while getting the books by author id");
+        }
 
-    let output = '';
-    for (let book of books) {
-        output += `<p>Title: ${book.title}</p>`;
-        output += `<p>Author: ${book.author.firstName} ${book.author.lastName}</p>`;
-        output += `<hr>`;
+        const data = await response.json();
+        let books = data.data.findBooksByAuthorId;
+
+        let output = '';
+        for (let book of books) {
+            output += `<p class="message-output">Book Id: ${book.bookId}</p>`;
+            output += `<p class="message-output">Title: ${book.title}</p>`;
+            output += `<p class="message-output">Author: ${book.author.firstName} ${book.author.lastName}</p>`;
+            output += `<p class="message-output">Publisher: ${book.publisher.name}</p>`;
+            output += `<hr>`;
+        }
+
+        document.getElementById('booksOutput').innerHTML = output;
+    } catch (error) {
+        document.getElementById('booksOutput').innerHTML = `<p>Error: ${error.message}</p>`;
     }
-
-    document.getElementById('booksOutput').innerHTML = output;
 }
