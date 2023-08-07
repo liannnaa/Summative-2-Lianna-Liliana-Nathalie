@@ -1,15 +1,18 @@
 package com.company.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "publisher")
 public class Publisher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer publisherId;
+    private int publisherId;
 
     private String name;
     private String street;
@@ -19,11 +22,11 @@ public class Publisher {
     private String phone;
     private String email;
 
-    public Integer getPublisherId() {
+    public int getPublisherId() {
         return publisherId;
     }
 
-    public void setPublisherId(Integer publisherId) {
+    public void setPublisherId(int publisherId) {
         this.publisherId = publisherId;
     }
 
