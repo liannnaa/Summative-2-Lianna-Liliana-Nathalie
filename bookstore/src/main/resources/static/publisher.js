@@ -109,7 +109,13 @@ async function getPublisherById() {
                 phone
                 email
                 publisherBooks {
+                    bookId
                     title
+                    author {
+                        authorId
+                        firstName
+                        lastName
+                    }
                 }
               }
             }`}),
@@ -131,6 +137,13 @@ async function getPublisherById() {
         output += `<p class="message-output">Postal Code: ${publisher.postalCode}</p>`;
         output += `<p class="message-output">Phone: ${publisher.phone}</p>`;
         output += `<p class="message-output">Email: ${publisher.email}</p>`;
+        output += `<p class="message-output">Books Published:</p>`;
+        for(let book of publisher.publisherBooks){
+            output += `<p class="message-output">Book Id: ${book.bookId}</p>`;
+            output += `<p class="message-output">Title: ${book.title}</p>`;
+            output += `<p class="message-output">Author Id: ${book.author.authorId}</p>`;
+            output += `<p class="message-output">Author Name: ${book.author.firstName} ${book.author.lastName}</p>`;
+        }
         output += `<hr>`;
 
         document.getElementById('publishersOutput').innerHTML = output;
