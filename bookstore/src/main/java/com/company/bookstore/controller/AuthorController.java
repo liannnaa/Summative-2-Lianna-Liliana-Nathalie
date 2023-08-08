@@ -23,14 +23,14 @@ public class AuthorController {
 
     //Return All Authors
     @GetMapping("/authors")
-    public List<Author> getAuthor() {
+    public List<Author> getAllAuthors() {
         return repo.findAll();
     }
 
     //Read By Author ID
-    @GetMapping("/authors/{authorId}")
-    public Author getAuthorById(@PathVariable int authorId) {
-        Optional<Author> returnVal = repo.findById(authorId);
+    @GetMapping("/authors/{id}")
+    public Author getAuthorById(@PathVariable int id) {
+        Optional<Author> returnVal = repo.findById(id);
         if (returnVal.isPresent()) {
             return returnVal.get();
         } else {
@@ -39,16 +39,16 @@ public class AuthorController {
     }
 
     //Update Author by ID
-    @PutMapping("authors/{authorId}")
+    @PutMapping("authors")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateAuthor(@RequestBody Author author) {
            repo.save(author);
         }
 
-    @DeleteMapping("authors/{authorId}")
+    @DeleteMapping("authors/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAuthorById(@PathVariable int authorId) {
-        repo.deleteById(authorId);
+    public void deleteAuthorById(@PathVariable int id) {
+        repo.deleteById(id);
 
     }
 }

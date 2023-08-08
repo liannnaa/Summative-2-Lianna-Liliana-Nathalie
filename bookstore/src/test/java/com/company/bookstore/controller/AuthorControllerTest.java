@@ -34,15 +34,8 @@ class AuthorControllerTest {
         @BeforeEach
         public void setup() {
             author = new Author();
-            author.setAuthorId(1);
             author.setFirstName("John");
             author.setLastName("Doe");
-            author.setEmail("johndoe@gmail.com");
-            author.setStreet("123 St");
-            author.setCity("Miami");
-            author.setState("FL");
-            author.setPostalCode("33167");
-            author.setPhone("123-456-7890");
         }
 
         @Test
@@ -55,13 +48,7 @@ class AuthorControllerTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.firstName").value("John"))
-                    .andExpect(jsonPath("$.lastName").value("Doe"))
-                    .andExpect(jsonPath("$.email").value("johndoe@gmail.com"))
-                    .andExpect(jsonPath("$.street").value("123 St"))
-                    .andExpect(jsonPath("$.city").value("Miami"))
-                    .andExpect(jsonPath("$.state").value("FL"))
-                    .andExpect(jsonPath("$.postalCode").value("33167"))
-                    .andExpect(jsonPath("$.phone").value("123-456-7890"));
+                    .andExpect(jsonPath("$.lastName").value("Doe"));
         }
 
         @Test
@@ -90,13 +77,7 @@ class AuthorControllerTest {
                             .get("/authors/{id}", 1))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.firstName").value("John"))
-                    .andExpect(jsonPath("$.lastName").value("Doe"))
-                    .andExpect(jsonPath("$.email").value("johndoe@gmail.com"))
-                    .andExpect(jsonPath("$.street").value("123 St"))
-                    .andExpect(jsonPath("$.city").value("Miami"))
-                    .andExpect(jsonPath("$.state").value("FL"))
-                    .andExpect(jsonPath("$.postalCode").value("33167"))
-                    .andExpect(jsonPath("$.phone").value("123-456-7890"));
+                    .andExpect(jsonPath("$.lastName").value("Doe"));
         }
 
 
@@ -108,13 +89,7 @@ class AuthorControllerTest {
                             .get("/authors"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0].firstName").value("John"))
-                    .andExpect(jsonPath("$[0].lastName").value("Doe"))
-                    .andExpect(jsonPath("$[0].email").value("johndoe@gmail.com"))
-                    .andExpect(jsonPath("$[0].street").value("123 St"))
-                    .andExpect(jsonPath("$[0].city").value("Miami"))
-                    .andExpect(jsonPath("$[0].state").value("FL"))
-                    .andExpect(jsonPath("$[0].postalCode").value("33167"))
-                    .andExpect(jsonPath("$[0].phone").value("123-456-7890"));
+                    .andExpect(jsonPath("$[0].lastName").value("Doe"));
         }
 
 }

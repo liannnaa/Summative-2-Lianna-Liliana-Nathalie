@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8080/author';
+const apiUrl = 'http://localhost:8080/authors';
 
 async function addAuthor() {
     const author = {
@@ -112,7 +112,7 @@ async function getAuthorById() {
                 postalCode
                 phone
                 email
-                books {
+                authorBooks {
                     bookId
                     title
                     publisher {

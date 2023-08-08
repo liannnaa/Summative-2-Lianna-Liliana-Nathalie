@@ -27,7 +27,6 @@ class AuthorRepositoryTest {
         // Arrange
         author = new Author();
 
-        Author author = new Author();
         author.setAuthorId(1);
         author.setFirstName("Test First");
         author.setLastName("Test Last");

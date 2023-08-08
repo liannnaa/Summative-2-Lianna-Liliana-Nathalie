@@ -18,7 +18,7 @@ type Author {
     postalCode: String
     state: String
     street: String
-    books: [Book]
+    authorBooks: [Book]
 }
 
 type Publisher {
@@ -39,6 +39,9 @@ type Query {
 
     getAllPublishers: Publisher
     getPublisherById(id: ID!): Publisher
+
+    getAllAuthors: Author
+    getAuthorById(id: ID!): Author
 }
 
 type Mutation {
@@ -49,4 +52,8 @@ type Mutation {
     addPublisher(name: String, street: String, city: String, state: String, postalCode: String, phone: String, email: String): Publisher
     updatePublisher(id: ID!, name: String, street: String, city: String, state: String, postalCode: String, phone: String, email: String): Publisher
     deletePublisherById(id: ID!): Boolean
+
+    addAuthor(firstName: String, lastName: String, street: String, city: String, state: String, postalCode: String, phone: String, email: String): Author
+    updateAuthor(id: ID!, firstName: String, lastName: String, street: String, city: String, state: String, postalCode: String, phone: String, email: String): Author
+    deleteAuthorById(id: ID!): Boolean
 }

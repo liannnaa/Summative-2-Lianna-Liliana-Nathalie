@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "author")
 public class Author {
 
     @Id
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int authorId;
 
