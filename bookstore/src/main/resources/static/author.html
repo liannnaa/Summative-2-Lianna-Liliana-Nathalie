@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Author</title>
+    <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #EAD5E6;
+      font-family: Urbanist, sans-serif;
+    }
+
+    .author-management, .author-info {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .author-management > div, .author-info > div {
+      margin-right: 20px;
+      border: 2px solid white;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    h1, h2, p {
+      text-align: center;
+      color: #685F74;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 200px;
+      height: 40px;
+    }
+
+    button {
+      width: 220px;
+      height: 55px;
+      color: #685F74;
+      background-color: #CA9CE1;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-bottom: 30px;
+      font-family: Manrope, sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+
+    p {
+      font-size: 24px;
+      font-weight: 500;
+      margin-top: 30px;
+    }
+
+    .message-output p {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+   </style>
+</head>
+<body>
+<h1>Author</h1>
+
+<div class="author-management">
+    <div>
+        <h2>Add Author</h2>
+        First Name: <input type="text" id="addFirstName"><br>
+        Last Name: <input type="text" id="addLastName"><br>
+        Street: <input type="text" id="addStreet"><br>
+        City: <input type="text" id="addCity"><br>
+        State: <input type="text" id="addState"><br>
+        Postal Code: <input type="text" id="addPostalCode"><br>
+        Phone: <input type="text" id="addPhone"><br>
+        Email: <input type="text" id="addEmail"><br>
+        <button onclick="addAuthor()">Add Author</button>
+        <div id="addAuthorStatus" class="message-output"></div>
+    </div>
+
+    <div>
+        <h2>Update Author</h2>
+        Author Id: <input type="text" id="updateAuthorId"><br>
+        First Name: <input type="text" id="updateFirstName"><br>
+        Last Name: <input type="text" id="updateLastName"><br>
+        Street: <input type="text" id="updateStreet"><br>
+        City: <input type="text" id="updateCity"><br>
+        State: <input type="text" id="updateState"><br>
+        Postal Code: <input type="text" id="updatePostalCode"><br>
+        Phone: <input type="text" id="updatePhone"><br>
+        Email: <input type="text" id="updateEmail"><br>
+        <button onclick="updateAuthor()">Update Author</button>
+        <div id="updateAuthorStatus" class="message-output"></div>
+    </div>
+</div>
+
+<div class="author-info">
+    <div>
+        <h2>Delete Author</h2>
+        Author Id: <input type="text" id="deleteAuthorId"><br>
+        <button onclick="deleteAuthor()">Delete Author</button>
+        <div id="deleteAuthorStatus" class="message-output"></div>
+    </div>
+
+    <div>
+        <h2>Get Authors</h2>
+        Author Id: <input type="text" id="getAuthorId"><br>
+        <div>
+            <button onclick="getAuthors()">Get All Authors</button>
+            <button onclick="getAuthorById()">Get Author By Id</button>
+            <br>
+        </div>
+        <div id="authorsOutput" class="message-output"></div>
+    </div>
+</div>
+
+<script src="author.js"></script>
+</body>
+</html>

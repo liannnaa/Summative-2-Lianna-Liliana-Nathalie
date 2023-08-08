@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book</title>
+    <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #EAD5E6;
+      font-family: Urbanist, sans-serif;
+    }
+
+    .book-management, .book-info {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .book-management > div, .book-info > div {
+      margin-right: 20px;
+      border: 2px solid white;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    h1, h2, p {
+      text-align: center;
+      color: #685F74;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 200px;
+      height: 40px;
+    }
+
+    button {
+      width: 220px;
+      height: 55px;
+      color: #685F74;
+      background-color: #CA9CE1;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-bottom: 30px;
+      font-family: Manrope, sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+
+    p {
+      font-size: 24px;
+      font-weight: 500;
+      margin-top: 30px;
+    }
+
+    .message-output p {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+   </style>
+</head>
+<body>
+<h1>Book</h1>
+
+<div class="book-management">
+    <div>
+        <h2>Add Book</h2>
+        ISBN: <input type="text" id="addISBN"><br>
+        Publish Date: <input type="text" id="addPublishDate"><br>
+        Author Id: <input type="text" id="addAuthorId"><br>
+        Title: <input type="text" id="addTitle"><br>
+        Publisher Id: <input type="text" id="addPublisherId"><br>
+        Price: <input type="text" id="addPrice"><br>
+        <button onclick="addBook()">Add Book</button>
+        <div id="addBookStatus" class="message-output"></div>
+    </div>
+
+    <div>
+        <h2>Update Book</h2>
+        Book Id: <input type="text" id="updateBookId"><br>
+        ISBN: <input type="text" id="updateISBN"><br>
+        Publish Date: <input type="text" id="updatePublishDate"><br>
+        Author Id: <input type="text" id="updateAuthorId"><br>
+        Title: <input type="text" id="updateTitle"><br>
+        Publisher Id: <input type="text" id="updatePublisherId"><br>
+        Price: <input type="text" id="updatePrice"><br>
+        <button onclick="updateBook()">Update Book</button>
+        <div id="updateBookStatus" class="message-output"></div>
+    </div>
+</div>
+
+<div class="book-info">
+    <div>
+        <h2>Delete Book</h2>
+        Book Id: <input type="text" id="deleteBookId"><br>
+        <button onclick="deleteBook()">Delete Book</button>
+        <div id="deleteBookStatus" class="message-output"></div>
+    </div>
+
+    <div>
+        <h2>Get Books</h2>
+        Book Id: <input type="text" id="getBookId"><br>
+        Author Id: <input type="text" id="getAuthorId"><br>
+        <div>
+            <button onclick="getBooks()">Get All Books</button>
+            <button onclick="getBookById()">Get Book By Id</button>
+            <button onclick="getBooksByAuthorId()">Get Books By Author Id</button>
+            <br>
+        </div>
+        <div id="booksOutput" class="message-output"></div>
+    </div>
+</div>
+
+<script src="book.js"></script>
+</body>
+</html>
